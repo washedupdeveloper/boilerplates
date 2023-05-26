@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  traefik:
+    image: "traefik:latest"
+    container_name: traefik
+    command:
+      - "--certificatesresolvers.letsencrypt.acme.email=${EMAIL}"
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "5432:5432"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/traefik.yml:ro
+      - ./dynamic.yml:/dynamic.yml
+      - ./acme.json:/acme.json
+    labels:
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.rule=Host(`traefik.${SERVER_HOSTNAME}`)"
+      - "traefik.http.routers.api.middlewares=user-auth@file"
+      - "traefik.http.routers.api.service=api@internal"
+
+  portainer:
+    image: "portainer/portainer-ee:latest"
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - portainer_data:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.portainer.entrypoints=websecure"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.${SERVER_HOSTNAME}`)"
+      - "traefik.http.routers.portainer.service=portainer"
+      - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+
+networks:
+  proxy:
+    external: true
+
+volumes:
+  portainer_data:
+    external: true

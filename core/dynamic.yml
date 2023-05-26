@@ -1,0 +1,4 @@
+user-auth:
+  basicAuth:
+    users:
+      - '{{ env "TRAEFIK_AUTH" }}'
