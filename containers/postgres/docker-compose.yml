@@ -27,7 +27,7 @@ services:
       start_period: 30s
 
   pgadmin:
-    image: "dpage/pgadmin4"
+    image: "dpage/pgadmin4:latest"
     container_name: pgadmin
     restart: unless-stopped
     depends_on:
