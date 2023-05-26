@@ -39,12 +39,19 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - portainer_data:/data
     labels:
-      - "traefik.enable=true"
       - "traefik.docker.network=proxy"
-      - "traefik.http.routers.portainer.entrypoints=websecure"
+        # Frontend
       - "traefik.http.routers.portainer.rule=Host(`portainer.${SERVER_HOSTNAME}`)"
-      - "traefik.http.routers.portainer.service=portainer"
+      - "traefik.http.routers.portainer.entrypoints=websecure"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
+      - "traefik.http.routers.portainer.service=portainer"
+      - "traefik.http.routers.portainer.tls.certresolver=production"
+        # Edge
+      # - "traefik.http.routers.edge.rule=Host(`edge.${SERVER_HOSTNAME}`)"
+      # - "traefik.http.routers.edge.entrypoints=websecure"
+      # - "traefik.http.services.edge.loadbalancer.server.port=8000"
+      # - "traefik.http.routers.edge.service=edge"
+      # - "traefik.http.routers.edge.tls.certresolver=production"
 
 networks:
   proxy:
