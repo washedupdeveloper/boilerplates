@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  pocketbase:
+    image: "spectado/pocketbase:latest"
+    container_name: pocketbase
+    command:
+      - "--encryptionEnv=${PB_ENCRYPTION_KEY}"
+    restart: unless-stopped
+    networks:
+      - proxy
+    volumes:
+      - pocketbase_data:/pb_data
+    labels:
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.pocketbase.rule=Host(`pb.${SERVER_HOSTNAME}`)"
+      - "traefik.http.routers.pocketbase.entrypoints=websecure"
+      - "traefik.http.services.pocketbase.loadbalancer.server.port=80"
+
+networks:
+  proxy:
+    external: true
+
+volumes:
+  pocketbase_data:
+    external: true
