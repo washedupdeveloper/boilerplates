@@ -2,8 +2,14 @@
 	"name": "homelab",
 	"version": "0.0.1",
 	"packageManager": "pnpm@8.4.0",
-	"scripts": {},
+	"scripts": {
+		"copy": "dotenv -- bash -c 'scp -r containers/* $USER@$URL:~/'"
+	},
+	"dependencies": {
+		"traefik": "workspace:*"
+	},
 	"devDependencies": {
-		"prettier": "latest"
+		"prettier": "latest",
+		"dotenv-cli": "^7.2.1"
 	}
 }
