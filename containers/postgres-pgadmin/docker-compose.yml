@@ -1,0 +1,52 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:alpine
+    container_name: postgres
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - 5432:5432
+    networks:
+      - proxy
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+    labels:
+      - traefik.tcp.routers.postgres.rule=HostSNI(`postgres.${URL}`)
+      - traefik.tcp.routers.postgres.entrypoints=tcp
+      # - traefik.tcp.services.postgres.loadbalancer.server.port=5432
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - .env
+    networks:
+      - proxy
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    labels:
+      - traefik.http.routers.pgadmin.rule=Host(`pgadmin.${URL}`)
+      - traefik.http.routers.pgadmin.entrypoints=https
+      # - traefik.http.services.pgadmin.loadbalancer.server.port=80
+
+volumes:
+  postgres_data:
+    external: true
+  pgadmin_data:
+    external: true
+
+networks:
+  proxy:
+    external: true
