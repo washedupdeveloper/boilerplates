@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  uptime-kuma:
+    container_name: uptime-kuma
+    image: louislam/uptime-kuma:latest
+    restart: unless-stopped
+    networks:
+      - proxy
+    volumes:
+      - uptime_kuma:/app/data
+    labels:
+      traefik.http.routers.uptime-kuma.rule: Host(`uptime.${URL}`)
+      traefik.http.routers.uptime-kuma.entrypoints: websecure
+      traefik.http.routers.uptime-kuma.tls: true
+
+volumes:
+  uptime_kuma:
+    external: true
+
+networks:
+  proxy:
+    external: true
