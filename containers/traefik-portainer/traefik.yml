@@ -1,0 +1,59 @@
+# static configuration
+
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: false # true by default
+
+log:
+  level: DEBUG # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  format: common # common, json, logfmt
+
+accessLog:
+  format: common # common, json, logfmt
+
+api:
+  debug: true
+  dashboard: true # true by default
+
+metrics:
+  prometheus:
+    buckets:
+      - 0.1
+      - 0.3
+      - 1.2
+      - 5.0
+
+entryPoints:
+  web:
+    address: :80
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+
+  websecure:
+    address: :443
+    http:
+      tls:
+        certResolver: cloudflare
+
+serversTransport:
+  insecureSkipVerify: true # cloudflare related, todo: check if necessary
+
+certificatesResolvers:
+  cloudflare:
+    acme:
+      # email: # provided through docker compose environment variable
+      storage: acme.json
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - 1.1.1.1:53
+          - 1.0.0.1:53
+
+providers:
+  docker:
+    exposedByDefault: true
+    network: proxy
+    watch: true
