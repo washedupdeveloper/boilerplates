@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"packageManager": "pnpm@8.4.0",
 	"scripts": {
-		"copy": "dotenv -- bash -c 'scp -r containers/* $USER@$URL:~/'"
+		"copy": "dotenv -- bash -c 'scp -r containers/* $USER@$URL:~/containers'"
 	},
 	"dependencies": {
 		"traefik": "workspace:*"
