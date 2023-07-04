@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+    kopia:
+        image: kopia/kopia:latest
+        hostname: kopia
+        container_name: kopia
+        restart: unless-stopped
+        command:
+            - server
+            - start
+            - --insecure
+            - --address=0.0.0.0:51515
+            - --server-username=${USER}
+            - --server-password=${PASSWORD}
+        environment:
+            USER: ${USER}
+            KOPIA_PASSWORD: ${PASSWORD}
+        networks:
+            - proxy
+        volumes:
+            - ./config:/app/config
+            - ./cache:/app/cache
+            - ./logs:/app/logs
+            - /home/${USER}/containers:/data/containers:ro
+            - /var/lib/docker/volumes:/data/volumes:ro
+        labels:
+            traefik.http.routers.kopia.rule: Host(`kopia.${URL}`)
+            traefik.http.routers.kopia.entrypoints: websecure
+            traefik.http.routers.kopia.tls: true
+
+            traefik.http.routers.kopia.service: kopia
+            traefik.http.services.kopia.loadbalancer.server.port: 51515
+
+            traefik.http.routers.kopia.middlewares: auth
+            traefik.http.middlewares.auth.basicauth.users: ${TRAEFIK_AUTH}
+
+networks:
+  proxy:
+    external: true
