@@ -8,14 +8,15 @@ services:
     networks:
       - proxy
     volumes:
-      - uptime_kuma:/app/data
+      - uptime-kuma_data:/app/data
+      - /var/lib/docker/:/var/lib/docker
     labels:
       traefik.http.routers.uptime-kuma.rule: Host(`uptime.${URL}`)
       traefik.http.routers.uptime-kuma.entrypoints: websecure
       traefik.http.routers.uptime-kuma.tls: true
 
 volumes:
-  uptime_kuma:
+  uptime-kuma_data:
     external: true
 
 networks:
