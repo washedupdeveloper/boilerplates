@@ -56,4 +56,5 @@ providers:
   docker:
     exposedByDefault: true
     network: proxy
+    defaultRule: 'Host(`{{ index .Labels "com.docker.compose.service" }}.${URL}`)'
     watch: true
