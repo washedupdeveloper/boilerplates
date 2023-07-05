@@ -1,0 +1,69 @@
+version: '3'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    command:
+      - --config.file=/prometheus.yml
+    networks:
+      - proxy
+    volumes:
+      - ./configs/prometheus.yml:/prometheus.yml
+      - ./password:/password
+      - ./configs/alert.rules:/alert.rules
+      - prometheus_data:/prometheus
+    labels:
+      traefik.http.routers.prometheus.rule: Host(`prometheus.${URL}`)
+      traefik.http.routers.prometheus.entrypoints: websecure
+      traefik.http.routers.prometheus.tls: true
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    restart: unless-stopped
+    networks:
+      - proxy
+    volumes:
+      - grafana_data:/var/lib/grafana
+    labels:
+      traefik.http.routers.grafana.rule: Host(`grafana.${URL}`)
+      traefik.http.routers.grafana.entrypoints: websecure
+      traefik.http.routers.grafana.tls: true
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    command: --path.rootfs=/host
+    pid: host
+    networks:
+      - proxy
+    volumes:
+      - /:/host:ro,rslave
+    labels:
+      traefik.enable: false
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    networks:
+    - proxy
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    labels:
+      traefik.enable: false
+
+networks:
+  proxy:
+    external: true
+
+volumes:
+  prometheus_data:
+    external: true
+  grafana_data:
+    external: true
