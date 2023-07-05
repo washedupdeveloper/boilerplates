@@ -1,22 +1,22 @@
 {
-  "[yaml]": {
-    "editor.defaultFormatter": "redhat.vscode-yaml",
-    "editor.tabSize": 2,
-    "editor.autoIndent": "advanced",
-    "editor.quickSuggestions": {
-      "other": true,
-      "comments": false,
-      "strings": true
-    }
-  },
-  "[dockercompose]": {
-    "editor.defaultFormatter": "redhat.vscode-yaml",
-    "editor.tabSize": 2,
-    "editor.autoIndent": "advanced",
-    "editor.quickSuggestions": {
-      "other": true,
-      "comments": false,
-      "strings": true
-    }
-  }
+	"[yaml]": {
+		"editor.defaultFormatter": "redhat.vscode-yaml",
+		"editor.tabSize": 2,
+		"editor.autoIndent": "advanced",
+		"editor.quickSuggestions": {
+			"other": true,
+			"comments": false,
+			"strings": true
+		}
+	},
+	"[dockercompose]": {
+		"editor.defaultFormatter": "ms-azuretools.vscode-docker",
+		"editor.tabSize": 2,
+		"editor.autoIndent": "advanced",
+		"editor.quickSuggestions": {
+			"other": true,
+			"comments": false,
+			"strings": true
+		}
+	}
 }
