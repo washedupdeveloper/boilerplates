@@ -19,6 +19,20 @@ services:
       traefik.http.routers.prometheus.entrypoints: websecure
       traefik.http.routers.prometheus.tls: true
 
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    restart: unless-stopped
+    command:
+      - '--config.file=/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+    networks:
+      - proxy
+    volumes:
+      - "./configs/alertmanager.yml:/alertmanager/config.yml"
+    labels:
+      traefik.enable: false
+
   grafana:
     image: grafana/grafana-oss:latest
     container_name: grafana
