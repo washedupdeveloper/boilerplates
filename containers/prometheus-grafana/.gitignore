@@ -1,1 +1,3 @@
 /password
+/configs/*
+!/configs/prometheus.yml
